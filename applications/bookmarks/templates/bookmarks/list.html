@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}{{ block.super }} - {% block subtitle %}{% endblock %} - Page {{ page.number }}{% endblock %}
+{% block body %}
+<h2>{% block heading %}{% endblock %} - Page {{ page.number }}</h2>
+<ul>
+    {% for bookmark in page.object_list %}
+        <li>
+            <h3><a href="{{ bookmark.url }}">{{ bookmark.title }}</a></h3>
+            <p>{{ bookmark.description }}</p>
+            <span>{{ pub_date }}</span>
+            <ul>
+            {% if bookmark.tags.exists %}
+            {% for tag in bookmark.tags.all %}
+                <li>{{ tag.name }}</li>
+            {% endfor %}
+            {% endif %}
+            </ul>
+        </li>
+    {% endfor %}
+</ul>
+{% endblock %}
