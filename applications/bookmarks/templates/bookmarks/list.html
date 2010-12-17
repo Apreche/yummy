@@ -6,6 +6,9 @@
     {% for bookmark in page.object_list %}
         <li>
             <h3><a href="{{ bookmark.url }}">{{ bookmark.title }}</a></h3>
+            {% if bookmark.private %}
+            <span>PRIVATE</span>
+            {% endif %}
             <p>{{ bookmark.description }}</p>
             <span>{{ pub_date }}</span>
             <ul>
