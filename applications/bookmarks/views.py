@@ -67,9 +67,8 @@ def delicious_import(request):
                     pub_date = datetime.utcfromtimestamp(int(link['add_date']))
                     bookmark.pub_date = pub_date
                     bookmark.private = link['private'] == u"1"
-                    if hasattr(row.nextSibling, 'name'):
-                        if row.nextSibling.name == 'dd':
-                            bookmark.description = row.nextSibling.text
+                    if row.find('dd'):
+                        bookmark.description = row.find('dd').text
                     bookmark.save()
                     if link.has_key('tags'):
                         tags = link['tags'].split(',')
