@@ -9,6 +9,9 @@
             {% if bookmark.private %}
             <span>PRIVATE</span>
             {% endif %}
+            {% ifnotequal bookmark.owner user %}
+            <span><a href="{% url user-list bookmark.owner %}">{{ bookmark.owner.username }}</a></span>
+            {% endifnotequal %}
             <p>{{ bookmark.description }}</p>
             <span>{{ pub_date }}</span>
             <ul>

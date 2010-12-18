@@ -25,7 +25,7 @@ def user_list(request, username, page_number=None):
     if user != request.user:
         bookmarks = bookmarks.exclude(private=True)
     template_name = "bookmarks/user_list.html"
-    extra_context = {'user': user}
+    extra_context = {'list_user': user}
     return bookmark_list(request, bookmarks, page_number=page_number,
         extra_context=extra_context, template_name=template_name)
 
