@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}{{ block.super }} - Import From Delicious{% endblock %}
+{% block body %}
+<form enctype="multipart/form-data" method="post">
+{{ form.as_p }}
+{% csrf_token %}
+<input type="submit" value="Submit" />
+</form>
+{% endblock %}
