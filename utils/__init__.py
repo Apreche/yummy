@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 
@@ -27,6 +28,10 @@ class BasicView(object):
 
     def __call__(self, *args, **kwargs):
         request = args[0]
-        template_name, context = self.view(*args, **kwargs)
-        return render_to_response(template_name, context,
-            context_instance = RequestContext(request))
+        response = self.view(*args, **kwargs)
+        if isinstance(response, HttpResponse):
+            return response
+        else:
+            template_name, context = response
+            return render_to_response(template_name, context,
+                context_instance = RequestContext(request))

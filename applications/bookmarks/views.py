@@ -1,7 +1,8 @@
 from datetime import datetime
 
 from django import forms
-from django.http import Http404
+from django.core.urlresolvers import reverse
+from django.http import Http404, HttpResponseRedirect
 from django.core.paginator import Paginator, EmptyPage
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
@@ -11,7 +12,7 @@ from utils import BasicView
 from BeautifulSoup import BeautifulStoneSoup
 
 from bookmarks.models import Bookmark
-from bookmarks.forms import DeliciousImportForm
+from bookmarks.forms import DeliciousImportForm, NewBookmarkForm
 
 def global_list(request, page_number=None):
     bookmarks = Bookmark.objects.filter(private=False)
@@ -41,6 +42,26 @@ def bookmark_list(request, bookmarks, page_number=None,
         raise Http404
     context = extra_context
     context.update({'page': page})
+    return(template_name, context)
+
+@login_required
+@BasicView
+def new_bookmark(request):
+    if request.method == 'POST':
+        bookmark = Bookmark()
+        form = NewBookmarkForm(request.POST, instance=bookmark)
+        if form.is_valid():
+            bookmark.owner = request.user
+            bookmark.save()
+            for tag in form.cleaned_data['tags']:
+                bookmark.tags.add(tag)
+            bookmark.save()
+            url = reverse("user-list", args=[request.user.username])
+            return HttpResponseRedirect(url)
+    else:
+        form = NewBookmarkForm()
+    template_name = "bookmarks/new_bookmark.html"
+    context = {'form': form}
     return(template_name, context)
 
 @login_required
@@ -75,6 +96,8 @@ def delicious_import(request):
                         for tag in tags:
                             bookmark.tags.add(tag)
                         bookmark.save()
+            url = reverse("user-list", args=[request.user.username])
+            return HttpResponseRedirect(url)
     else:
         form = DeliciousImportForm()
     template_name = "bookmarks/delicious_import.html"
