@@ -8,6 +8,7 @@
   </head>
   <body>
       <h1><a href="/">Yummy Bookmarks</a></h1>
+      {% block nav %}
       {% if user.is_authenticated %}
       <p>Logged in as <a href="{% url user-list user.username %}">{{ user.username }}</a></p>
       <a href="/post/">New Bookmark</a>
@@ -16,6 +17,7 @@
       {% else %}
       <a href="/accounts/login/">Login</a>
       {% endif %}
+      {% endblock %}
       {% block body %}
       {% endblock %}
   </body>
