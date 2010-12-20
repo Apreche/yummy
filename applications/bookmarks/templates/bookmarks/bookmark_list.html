@@ -3,7 +3,7 @@
 {% block body %}
 <h2>{% block heading %}{% endblock %} - Page {{ page.number }}</h2>
 <ul>
-    {% for bookmark in page.object_list %}
+    {% for bookmark in object_list %}
         <li>
             <h3><a href="{{ bookmark.url }}">{{ bookmark.title }}</a></h3>
             {% if bookmark.private %}

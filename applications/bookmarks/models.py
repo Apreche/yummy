@@ -5,7 +5,7 @@ from taggit.managers import TaggableManager
 class Bookmark(models.Model):
     title = models.TextField()
     url = models.URLField(verify_exists=False, max_length=2500)
-    owner = models.ForeignKey('auth.user')
+    owner = models.ForeignKey('auth.User')
     pub_date = models.DateTimeField(default=datetime.now())
     edit_date = models.DateTimeField(auto_now=True)
     description = models.TextField(blank=True)
