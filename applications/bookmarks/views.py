@@ -22,6 +22,18 @@ def global_list(request, page_number=None):
     return bookmark_list(request, bookmarks, page_number=page_number,
         template_name=template_name)
 
+@login_required
+@BasicView
+def delete_bookmark(request, pk):
+    bookmark = get_object_or_404(Bookmark, pk=pk)
+
+    if bookmark.owner == request.user:
+        if request.method == "POST" and request.POST.get("confirm", "") == "true":
+            bookmark.delete()
+            url = reverse("user-list", args=[request.user.username])
+            return HttpResponseRedirect(url)
+    return ("bookmarks/delete_bookmark.html", {"bookmark": bookmark})
+
 def user_list(request, username, page_number=None):
     user = get_object_or_404(User, username=username)
     bookmarks = Bookmark.objects.filter(owner=user)

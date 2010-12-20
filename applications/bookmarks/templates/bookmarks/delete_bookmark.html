@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}{{ block.super }} - {% block subtitle %}Delete Bookmark: {{ bookmark.title }}{% endblock %}{% endblock %}
+{% block body %}
+<h1>Delete Bookmark?</h1>
+<h3>{{ bookmark.url }}</h3>
+<form method="post" action="{% url delete-bookmark bookmark.pk %}">
+    {% csrf_token %}
+    <input name="confirm" type="hidden" value="true">
+    <input type="submit" value="Delete">
+</form>
+{% endblock %}

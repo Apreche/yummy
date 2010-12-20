@@ -11,6 +11,8 @@
             {% endif %}
             {% ifnotequal bookmark.owner user %}
             <span><a href="{% url user-list bookmark.owner %}">{{ bookmark.owner.username }}</a></span>
+            {% else %}
+            <span><a href="{% url delete-bookmark bookmark.pk %}">Delete Bookmark</a></span>
             {% endifnotequal %}
             <p>{{ bookmark.description }}</p>
             <span>{{ pub_date }}</span>
