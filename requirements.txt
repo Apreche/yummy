@@ -5,3 +5,4 @@ distribute==0.6.14
 django-extensions==0.6
 django-taggit==0.9.1
 docutils==0.7
+django-pagination==1.0.7

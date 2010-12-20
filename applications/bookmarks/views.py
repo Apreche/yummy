@@ -3,8 +3,7 @@ from datetime import datetime
 from django import forms
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
-from django.http import Http404, HttpResponseRedirect
-from django.core.paginator import Paginator, EmptyPage
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
@@ -16,11 +15,10 @@ from BeautifulSoup import BeautifulStoneSoup
 from bookmarks.models import Bookmark
 from bookmarks.forms import DeliciousImportForm, NewBookmarkForm
 
-def global_list(request, page_number=None):
+def global_list(request):
     bookmarks = Bookmark.objects.filter(private=False)
     template_name = "bookmarks/global_list.html"
-    return bookmark_list(request, bookmarks, page_number=page_number,
-        template_name=template_name)
+    return bookmark_list(request, bookmarks, template_name=template_name)
 
 @login_required
 @BasicView
@@ -34,17 +32,17 @@ def delete_bookmark(request, pk):
             return HttpResponseRedirect(url)
     return ("bookmarks/delete_bookmark.html", {"bookmark": bookmark})
 
-def user_list(request, username, page_number=None):
+def user_list(request, username):
     user = get_object_or_404(User, username=username)
     bookmarks = Bookmark.objects.filter(owner=user)
     if user != request.user:
         bookmarks = bookmarks.exclude(private=True)
     template_name = "bookmarks/user_list.html"
     extra_context = {'list_user': user}
-    return bookmark_list(request, bookmarks, page_number=page_number,
-        extra_context=extra_context, template_name=template_name)
+    return bookmark_list(request, bookmarks, extra_context=extra_context,
+        template_name=template_name)
 
-def by_tag(request, slug, username=None, page_number=None):
+def by_tag(request, slug, username=None):
     tag = get_object_or_404(Tag, slug=slug)
     extra_context = {'tag': tag}
     if username:
@@ -61,21 +59,14 @@ def by_tag(request, slug, username=None, page_number=None):
         tag=tag, content_type=ContentType.objects.get_for_model(Bookmark)
     ).values_list("object_id", flat=True))
     
-    return bookmark_list(request, bookmarks, page_number=page_number,
-        extra_context=extra_context, template_name=template_name)
+    return bookmark_list(request, bookmarks, extra_context=extra_context,
+        template_name=template_name)
 
 @BasicView
-def bookmark_list(request, bookmarks, page_number=None,
-        extra_context={}, template_name="bookmarks/list.html"):
-    if page_number is None:
-        page_number = 1
-    paginator = Paginator(bookmarks, 10, allow_empty_first_page=False)
-    try:
-        page = paginator.page(page_number)
-    except EmptyPage:
-        raise Http404
+def bookmark_list(request, bookmarks, extra_context={},
+    template_name="bookmarks/list.html"):
     context = extra_context
-    context.update({'page': page})
+    context.update({'bookmarks': bookmarks})
     return(template_name, context)
 
 @login_required
@@ -128,7 +119,8 @@ def delicious_import(request):
                     if link.has_key('tags'):
                         tags = link['tags'].split(',')
                         for tag in tags:
-                            bookmark.tags.add(tag)
+                            if len(tag) > 0:
+                                bookmark.tags.add(tag)
                         bookmark.save()
             url = reverse("user-list", args=[request.user.username])
             return HttpResponseRedirect(url)

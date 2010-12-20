@@ -1,9 +1,11 @@
 {% extends "base.html" %}
+{% load pagination_tags %}
 {% block title %}{{ block.super }} - {% block subtitle %}{% endblock %} - Page {{ page.number }}{% endblock %}
 {% block body %}
+{% autopaginate bookmarks 10 %}
 <h2>{% block heading %}{% endblock %} - Page {{ page.number }}</h2>
 <ul>
-    {% for bookmark in page.object_list %}
+    {% for bookmark in bookmarks %}
         <li>
             <h3><a href="{{ bookmark.url }}">{{ bookmark.title }}</a></h3>
             {% if bookmark.private %}
@@ -17,7 +19,7 @@
             <p>{{ bookmark.description }}</p>
             <span>{{ pub_date }}</span>
             <ul>
-            {% if bookmark.tags.exists %}
+            {% if bookmark.tags.count %}
             {% for tag in bookmark.tags.all %}
                 <li><a href="{% url by-tag tag.slug %}">{{ tag.name }}</li>
             {% endfor %}
@@ -26,4 +28,5 @@
         </li>
     {% endfor %}
 </ul>
+{% paginate %}
 {% endblock %}
