@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from django import forms
+from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponseRedirect
 from django.core.paginator import Paginator, EmptyPage
@@ -8,6 +9,7 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 
+from taggit.models import Tag, TaggedItem
 from utils import BasicView
 from BeautifulSoup import BeautifulStoneSoup
 
@@ -27,6 +29,26 @@ def user_list(request, username, page_number=None):
         bookmarks = bookmarks.exclude(private=True)
     template_name = "bookmarks/user_list.html"
     extra_context = {'list_user': user}
+    return bookmark_list(request, bookmarks, page_number=page_number,
+        extra_context=extra_context, template_name=template_name)
+
+def by_tag(request, slug, username=None, page_number=None):
+    tag = get_object_or_404(Tag, slug=slug)
+    extra_context = {'tag': tag}
+    if username:
+        user = get_object_or_404(User, username=username)
+        bookmarks = user.bookmark_set.all()
+        if user != request.user:
+            bookmarks = bookmarks.exclude(private=True)
+        extra_context.update({'list_user': user})
+        template_name = "bookmarks/user_list.html"
+    else:
+        bookmarks = Bookmark.objects.all()
+        template_name = "bookmarks/global_list.html"
+    bookmarks = bookmarks.filter(pk__in=TaggedItem.objects.filter(
+        tag=tag, content_type=ContentType.objects.get_for_model(Bookmark)
+    ).values_list("object_id", flat=True))
+    
     return bookmark_list(request, bookmarks, page_number=page_number,
         extra_context=extra_context, template_name=template_name)
 
