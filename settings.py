@@ -7,7 +7,7 @@ UTIL_ROOT = os.path.join(os.path.dirname(__file__), 'utils')
 sys.path.insert(0, APP_ROOT)
 sys.path.insert(0, UTIL_ROOT)
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
