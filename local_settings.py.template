@@ -1,0 +1,46 @@
+DEBUG = True
+TEMPLATE_DEBUG = DEBUG
+
+ADMINS = (
+    #('Scott Rubin', 'apreche@frontrowcrew.com'),
+)
+MANAGERS = ADMINS
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.',
+        'NAME': '',
+        'USER': '',
+        'PASSWORD': '',
+    }
+}
+
+TIME_ZONE = 'America/New_York'
+
+SITE_ID = 2
+
+MEDIA_ROOT = '/full/path/to/static/'
+MEDIA_URL = '/static/'
+
+SECRET_KEY = ''
+
+TEMPLATE_DIRS = (
+    '/full/path/to/templates/',
+)
+
+INSTALLED_APPS = (
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.sites',
+    'django.contrib.messages',
+    'django.contrib.admin',
+    'django.contrib.admindocs',
+    'django.contrib.flatpages',
+    'django_extensions',
+    'pagination',
+    'taggit',
+    'south',
+
+    'bookmarks',
+)
