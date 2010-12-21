@@ -2,10 +2,11 @@ from datetime import datetime
 
 from django import forms
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from django.contrib.sites.models import Site
 
 from taggit.models import Tag
 from utils import BasicView
@@ -89,7 +90,9 @@ def new_bookmark(request):
             url = reverse("user-list", args=[request.user.username])
             return HttpResponseRedirect(url)
     else:
-        form = NewBookmarkForm()
+        url = request.GET.get("url", None)
+        title = request.GET.get("title", None)
+        form = NewBookmarkForm(initial_url=url, initial_title=title)
     template_name = "bookmarks/new_bookmark.html"
     context = {'form': form}
     return(template_name, context)
@@ -134,3 +137,8 @@ def delicious_import(request):
     template_name = "bookmarks/delicious_import.html"
     context = {'form': form}
     return(template_name, context)
+
+@login_required
+@BasicView
+def extensions(request):
+    return("bookmarks/extensions.html", {"current_site":Site.objects.get_current()})
