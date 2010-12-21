@@ -1,9 +1,22 @@
 {% extends "base.html" %}
 {% block title %}{{ block.super }} - {% block subtitle %}Delete Bookmark: {{ bookmark.title }}{% endblock %}{% endblock %}
 {% block body %}
-<h1>Delete Bookmark?</h1>
-<h3>{{ bookmark.url }}</h3>
-<form method="post" action="{% url delete-bookmark bookmark.pk %}">
+<h2>delete bookmark?</h2>
+<h3><a href="{{ bookmark.url }}">{{ bookmark.title }}</a></h3>
+<h4>{{ bookmark.url }}</h4>
+<span>{{ bookmark.pub_date }}</span>
+{% if bookmark.private %}
+<span>PRIVATE</span>
+{% endif %}
+<p>{{ bookmark.description }}</p>
+<ul>
+    {% if bookmark.tags.count %}
+    {% for tag in bookmark.tags.all %}
+        <li><a href="{% url tag-list tag.slug %}">{{ tag.name }}</li>
+    {% endfor %}
+    {% endif %}
+</ul>
+<form method="post" action="{% url delete-bookmark bookmark.id %}">
     {% csrf_token %}
     <input name="confirm" type="hidden" value="true">
     <input type="submit" value="Delete">

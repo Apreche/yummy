@@ -12,3 +12,5 @@ Technical
 ---------
 
 Yummy is an extremely standard Django application. Setup a database, configure the settings file, install the requirements, and you are good to go. Eventually we will find a way to make installation like WordPress, the goal of all such webapps, but in such early stages it will be trickier.
+
+For those of you who are newbs out there, you should not need to edit the settings.py at all. Simply copy the local_settings.py.template to local_settings.py and edit that file. It is in the .gitignore, so your private info will not be shared.

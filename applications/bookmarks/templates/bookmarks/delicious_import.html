@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block title %}{{ block.super }} - Import From Delicious{% endblock %}
 {% block body %}
+<h2>import from delicious</h2>
 <form enctype="multipart/form-data" method="post">
 {{ form.as_p }}
 {% csrf_token %}

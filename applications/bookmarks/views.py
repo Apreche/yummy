@@ -1,14 +1,13 @@
 from datetime import datetime
 
 from django import forms
-from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 
-from taggit.models import Tag, TaggedItem
+from taggit.models import Tag
 from utils import BasicView
 from BeautifulSoup import BeautifulStoneSoup
 
@@ -16,21 +15,9 @@ from bookmarks.models import Bookmark
 from bookmarks.forms import DeliciousImportForm, NewBookmarkForm
 
 def global_list(request):
-    bookmarks = Bookmark.objects.filter(private=False)
+    bookmarks = Bookmark.objects.exclude(private=True)
     template_name = "bookmarks/global_list.html"
     return bookmark_list(request, bookmarks, template_name=template_name)
-
-@login_required
-@BasicView
-def delete_bookmark(request, pk):
-    bookmark = get_object_or_404(Bookmark, pk=pk)
-
-    if bookmark.owner == request.user:
-        if request.method == "POST" and request.POST.get("confirm", "") == "true":
-            bookmark.delete()
-            url = reverse("user-list", args=[request.user.username])
-            return HttpResponseRedirect(url)
-    return ("bookmarks/delete_bookmark.html", {"bookmark": bookmark})
 
 def user_list(request, username):
     user = get_object_or_404(User, username=username)
@@ -42,32 +29,50 @@ def user_list(request, username):
     return bookmark_list(request, bookmarks, extra_context=extra_context,
         template_name=template_name)
 
-def by_tag(request, slug, username=None):
-    tag = get_object_or_404(Tag, slug=slug)
-    extra_context = {'tag': tag}
+def tag_list(request, tags, username=None):
+    template_name = "bookmarks/tag_list.html"
+    extra_context = {}
+    bookmarks = Bookmark.objects.all()
+
+    tag_list = tags.split('+')
+    tag_objects = Tag.objects.filter(slug__in=tag_list)
+    if len(tag_objects) == 0:
+        raise Http404
+    for tag in tag_objects:
+        bookmarks = bookmarks.filter(tags__in=[tag])
+    extra_context.update({'tags': tag_objects})
+
     if username:
         user = get_object_or_404(User, username=username)
-        bookmarks = user.bookmark_set.all()
+        bookmarks = bookmarks.filter(owner=user)
         if user != request.user:
             bookmarks = bookmarks.exclude(private=True)
         extra_context.update({'list_user': user})
-        template_name = "bookmarks/user_list.html"
+        template_name = "bookmarks/tag_user_list.html"
     else:
-        bookmarks = Bookmark.objects.all()
-        template_name = "bookmarks/global_list.html"
-    bookmarks = bookmarks.filter(pk__in=TaggedItem.objects.filter(
-        tag=tag, content_type=ContentType.objects.get_for_model(Bookmark)
-    ).values_list("object_id", flat=True))
-    
+        bookmarks = bookmarks.exclude(private=True)
+
     return bookmark_list(request, bookmarks, extra_context=extra_context,
         template_name=template_name)
 
 @BasicView
 def bookmark_list(request, bookmarks, extra_context={},
     template_name="bookmarks/list.html"):
-    context = extra_context
-    context.update({'bookmarks': bookmarks})
+    context = {'bookmarks': bookmarks}
+    context.update(extra_context)
     return(template_name, context)
+
+@login_required
+@BasicView
+def delete_bookmark(request, id):
+    bookmark = get_object_or_404(Bookmark, id=id)
+
+    if bookmark.owner == request.user:
+        if request.method == "POST" and request.POST.get("confirm", "") == "true":
+            bookmark.delete()
+            url = reverse("user-list", args=[request.user.username])
+            return HttpResponseRedirect(url)
+    return ("bookmarks/delete_bookmark.html", {"bookmark": bookmark})
 
 @login_required
 @BasicView
@@ -129,4 +134,3 @@ def delicious_import(request):
     template_name = "bookmarks/delicious_import.html"
     context = {'form': form}
     return(template_name, context)
-

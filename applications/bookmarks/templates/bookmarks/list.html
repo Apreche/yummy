@@ -1,27 +1,27 @@
 {% extends "base.html" %}
 {% load pagination_tags %}
-{% block title %}{{ block.super }} - {% block subtitle %}{% endblock %} - Page {{ page.number }}{% endblock %}
+{% block title %}{{ block.super }} - {% block subtitle %}{% endblock %} - page {{ page_obj.number }}{% endblock %}
 {% block body %}
 {% autopaginate bookmarks 10 %}
-<h2>{% block heading %}{% endblock %} - Page {{ page.number }}</h2>
+<h2>{% block heading %}{% endblock %} - page {{ page_obj.number }}</h2>
 <ul>
     {% for bookmark in bookmarks %}
         <li>
             <h3><a href="{{ bookmark.url }}">{{ bookmark.title }}</a></h3>
+            <span>{{ bookmark.pub_date }}</span>
             {% if bookmark.private %}
             <span>PRIVATE</span>
             {% endif %}
             {% ifnotequal bookmark.owner user %}
             <span><a href="{% url user-list bookmark.owner %}">{{ bookmark.owner.username }}</a></span>
             {% else %}
-            <span><a href="{% url delete-bookmark bookmark.pk %}">Delete Bookmark</a></span>
+            <span><a href="{% url delete-bookmark bookmark.id %}">Delete Bookmark</a></span>
             {% endifnotequal %}
             <p>{{ bookmark.description }}</p>
-            <span>{{ pub_date }}</span>
             <ul>
             {% if bookmark.tags.count %}
             {% for tag in bookmark.tags.all %}
-                <li><a href="{% url by-tag tag.slug %}">{{ tag.name }}</li>
+                <li><a href="{% url tag-list tag.slug %}">{{ tag.name }}</li>
             {% endfor %}
             {% endif %}
             </ul>

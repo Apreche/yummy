@@ -67,6 +67,12 @@ ADMIN_MEDIA_PREFIX = '/media/'
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '**************************************************'
 
+# django-pagination settings
+PAGINATION_DEFAULT_PAGINATION = 10
+#PAGINATION_DEFAULT_WINDOW = 4
+#PAGINATION_DEFAULT_ORPHANS = 0
+PAGINATION_INVALID_PAGE_RAISES_404 = True
+
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
