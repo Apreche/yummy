@@ -5,6 +5,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     (r'', include('bookmarks.urls')),
+    (r'^search/', include('haystack.urls')),
     (r'^admin/doc/', include('django.contrib.admindocs.urls')),
     (r'^admin/', include(admin.site.urls)),
     (r'^accounts/login/$', 'django.contrib.auth.views.login'),

@@ -1,0 +1,1 @@
+javascript:(function(){u='http://{{current_site.domain}}/post/?url='+encodeURIComponent(window.location.href)+'&title='+encodeURIComponent(document.title);go=function(){if(!window.open(u,'yummy','location=yes,links=no,scrollbars=no,toolbar=no,width=550,height=550'))location.href=u};if(/Firefox/.test(navigator.userAgent)){setTimeout(go,0)}else{go()}})()

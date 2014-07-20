@@ -1,5 +1,4 @@
 from django.conf.urls.defaults import *
-from bookmarks.models import Bookmark
 
 urlpatterns = patterns('bookmarks.views',
     url(r'^$', 'global_list', name="global-list"),
@@ -9,4 +8,5 @@ urlpatterns = patterns('bookmarks.views',
     url(r'^user/(?P<username>\w+)/$', 'user_list', name="user-list"),
     url(r'^user/(?P<username>\w+)/tags/(?P<tags>[\w\+\-]+)/$', "tag_list", name="user-tag-list"),
     url(r'^tags/(?P<tags>[\w\+\-]+)/$', "tag_list", name="tag-list"),
+    url(r'^extensions/$', "extensions", name="extensions"),
 )
