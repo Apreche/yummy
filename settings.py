@@ -113,12 +113,15 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.admindocs',
     'django.contrib.flatpages',
+    'haystack',
     'pagination',
-    'taggit',
     'south',
+    'taggit',
 
     'bookmarks',
 )
+HAYSTACK_SITECONF = 'yummy.search_sites'
+HAYSTACK_SEARCH_ENGINE = 'simple'
 
 try:
     from local_settings import *
